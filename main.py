@@ -60,11 +60,20 @@ def view():
 @app.route('/create-assistant', methods=['POST'])
 def create_assistant():
     role = os.getenv("DESIGNER_ROLE")
+    language = get("language")
     assistant = GPT()
     assistant.set_role(role)
+    assistant.set_language(language)
     resp = assistant.ask(os.getenv("FIRST_CONFIG"))
     assistant_id = DB.create_memory(assistant.get_memory())
     return {'status': 200, 'assistant_id': assistant_id, 'response': resp}
+
+
+@app.route('/get-memory', methods=['POST'])
+def get_memory():
+    assistant_id = get("assistant_id")
+    assistant = get_assistant(assistant_id)
+    return response(200, assistant.get_memory)
 
 
 @app.route('/health', methods=['POST'])

@@ -1,13 +1,17 @@
 import openai
 import os
 
-
 class GPT():
+    LANG_INSTRUCTION = "We are going to speak in {}"
+
     def __init__(self):
         openai.api_key = os.getenv("OPENAI_KEY")
 
     def set_role(self, role):
         self.messages = [{"role": "system", "content": role}]
+
+    def set_language(self, lang):
+        self.messages = [{"role": "system", "content": self.LANG_INSTRUCTION.format(lang)}]
 
     def memorize(self, text):
         self.messages.append({"role": "assistant", "content": text})
