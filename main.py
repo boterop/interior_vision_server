@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from flask import Flask, request
 from flask_cors import CORS
 from lib.db import DB
+from waitress import serve
 
 load_dotenv()
 
@@ -42,7 +43,8 @@ def ask():
 @app.route('/view', methods=['POST'])
 def view():
     role_prompt = os.getenv("PROMPT_ROLE")
-    gpt_prompt = GPT(role_prompt)
+    gpt_prompt = GPT()
+    gpt_prompt.set_role(role_prompt)
     dall_e = Dall_E()
 
     assistant_id = get("assistant_id")
@@ -58,11 +60,20 @@ def view():
 @app.route('/create-assistant', methods=['POST'])
 def create_assistant():
     role = os.getenv("DESIGNER_ROLE")
-    assistant = GPT(role)
+    assistant = GPT()
+    assistant.set_role(role)
     resp = assistant.ask(os.getenv("FIRST_CONFIG"))
     assistant_id = DB.create_memory(assistant.get_memory())
     return {'status': 200, 'assistant_id': assistant_id, 'response': resp}
 
+
+@app.route('/health', methods=['POST'])
+def health():
+    return response(200, "OK")
+
+
+if __name__ == "__main__":
+    serve(app, host="0.0.0.0", port=6000)
 
 # role = os.getenv("DESIGNER_ROLE")
 # role_prompt = os.getenv("PROMPT_ROLE")
