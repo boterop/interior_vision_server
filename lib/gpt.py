@@ -1,6 +1,7 @@
 import openai
 import os
 
+
 class GPT():
     LANG_INSTRUCTION = "We are going to speak in {}"
 
@@ -11,7 +12,10 @@ class GPT():
         self.messages = [{"role": "system", "content": role}]
 
     def set_language(self, lang):
-        self.messages = [{"role": "system", "content": self.LANG_INSTRUCTION.format(lang)}]
+        self.set_system(self.LANG_INSTRUCTION.format(lang))
+
+    def set_system(self, instruction):
+        self.messages.append({"role": "system", "content": instruction})
 
     def memorize(self, text):
         self.messages.append({"role": "assistant", "content": text})

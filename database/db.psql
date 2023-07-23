@@ -1,0 +1,6 @@
+CREATE DATABASE interior_vision;
+
+CREATE TABLE  IF NOT EXISTS assistants (
+    id SERIAL PRIMARY KEY,
+    memory TEXT NOT NULL
+);

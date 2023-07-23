@@ -19,7 +19,8 @@ def get(prop):
 
 
 def get_assistant(assistant_id):
-    assistant_memory = DB.get_assistant_memory(assistant_id)
+    database = DB()
+    assistant_memory = database.get_assistant_memory(assistant_id)
     assistant = GPT()
     assistant.set_memory(assistant_memory)
     return assistant
@@ -31,12 +32,14 @@ def response(code, message):
 
 @app.route('/ask', methods=['POST'])
 def ask():
+    database = DB()
     message = get("message")
     assistant_id = get("assistant_id")
 
     assistant = get_assistant(assistant_id)
     resp = assistant.ask(message)
-    DB.save_memory(assistant_id, assistant.get_assistant_memory())
+    print(resp)
+    database.save_memory(assistant_id, assistant.get_memory())
     return response(200, resp)
 
 
@@ -59,21 +62,23 @@ def view():
 
 @app.route('/create-assistant', methods=['POST'])
 def create_assistant():
+    database = DB()
     role = os.getenv("DESIGNER_ROLE")
     language = get("language")
     assistant = GPT()
     assistant.set_role(role)
     assistant.set_language(language)
-    resp = assistant.ask(os.getenv("FIRST_CONFIG"))
-    assistant_id = DB.create_memory(assistant.get_memory())
-    return {'status': 200, 'assistant_id': assistant_id, 'response': resp}
+    assistant.set_system(os.getenv("FIRST_CONFIG"))
+    assistant_id = database.create_memory(assistant.get_memory())
+    return {'status': 200, 'response': assistant_id}
 
 
 @app.route('/get-memory', methods=['POST'])
 def get_memory():
+    database = DB()
     assistant_id = get("assistant_id")
-    assistant = get_assistant(assistant_id)
-    return response(200, assistant.get_memory())
+    assistant_memory = database.get_assistant_memory(assistant_id)
+    return response(200, assistant_memory)
 
 
 @app.route('/health', methods=['POST'])
