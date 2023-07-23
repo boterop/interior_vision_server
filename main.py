@@ -73,7 +73,7 @@ def create_assistant():
 def get_memory():
     assistant_id = get("assistant_id")
     assistant = get_assistant(assistant_id)
-    return response(200, assistant.get_memory)
+    return response(200, assistant.get_memory())
 
 
 @app.route('/health', methods=['POST'])
