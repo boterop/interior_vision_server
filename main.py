@@ -44,14 +44,11 @@ def ask():
 
 @app.route('/view', methods=['POST'])
 def view():
-    # role_prompt = os.getenv("PROMPT_ROLE")
-    # gpt_prompt = GPT()
-    # gpt_prompt.set_role(role_prompt)
     dall_e = Dall_E()
 
     assistant_id = get("assistant_id")
     assistant = get_assistant(assistant_id)
-    
+
     prompt = assistant.ask(os.getenv("CREATE_PROMPT")).replace("\n", ". ")
     url = dall_e.create_image(prompt, Dall_E.BIG, 1)
 
