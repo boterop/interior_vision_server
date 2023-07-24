@@ -38,23 +38,21 @@ def ask():
 
     assistant = get_assistant(assistant_id)
     resp = assistant.ask(message)
-    print(resp)
     database.save_memory(assistant_id, assistant.get_memory())
     return response(200, resp)
 
 
 @app.route('/view', methods=['POST'])
 def view():
-    role_prompt = os.getenv("PROMPT_ROLE")
-    gpt_prompt = GPT()
-    gpt_prompt.set_role(role_prompt)
+    # role_prompt = os.getenv("PROMPT_ROLE")
+    # gpt_prompt = GPT()
+    # gpt_prompt.set_role(role_prompt)
     dall_e = Dall_E()
 
     assistant_id = get("assistant_id")
     assistant = get_assistant(assistant_id)
-
-    last_result = assistant.get_last_said()
-    prompt = gpt_prompt.ask(last_result).replace("\n", ". ")
+    
+    prompt = assistant.ask(os.getenv("CREATE_PROMPT")).replace("\n", ". ")
     url = dall_e.create_image(prompt, Dall_E.BIG, 1)
 
     return response(200, url)
