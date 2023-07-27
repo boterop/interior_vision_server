@@ -63,7 +63,7 @@ def view():
     assistant = get_assistant(assistant_id)
 
     prompt = assistant.ask(os.getenv("CREATE_PROMPT")).replace("\n", ". ")
-    url = dall_e.create_image(prompt, Dall_E.BIG, 1)
+    url = dall_e.create_image(prompt, Dall_E.MEDIUM, 1)
 
     return response(200, url)
 
