@@ -12,6 +12,18 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
+ASSISTANT_NOT_FOUND = "The assistant with id {} was not found"
+
+
+def create_new_assistant():
+    role = os.getenv("DESIGNER_ROLE")
+    language = get("language")
+    assistant = GPT()
+    assistant.set_role(role)
+    assistant.set_language(language)
+    assistant.set_system(os.getenv("FIRST_CONFIG"))
+    return assistant
+
 
 def get(prop):
     data = request.get_json(force=True)
@@ -58,12 +70,7 @@ def view():
 @app.route('/create-assistant', methods=['POST'])
 def create_assistant():
     database = DB()
-    role = os.getenv("DESIGNER_ROLE")
-    language = get("language")
-    assistant = GPT()
-    assistant.set_role(role)
-    assistant.set_language(language)
-    assistant.set_system(os.getenv("FIRST_CONFIG"))
+    assistant = create_new_assistant()
     assistant_id = database.create_memory(assistant.get_memory())
     return {'status': 200, 'response': assistant_id}
 
@@ -72,8 +79,20 @@ def create_assistant():
 def get_memory():
     database = DB()
     assistant_id = get("assistant_id")
-    assistant_memory = database.get_assistant_memory(assistant_id)
-    return response(200, assistant_memory)
+    try:
+        assistant_memory = database.get_assistant_memory(assistant_id)
+        return response(200, assistant_memory)
+    except:
+        return response(409, ASSISTANT_NOT_FOUND.format(assistant_id))
+
+
+@app.route('/clean-memory', methods=['POST'])
+def clean_memory():
+    database = DB()
+    assistant_id = get("assistant_id")
+    assistant = create_new_assistant()
+    database.save_memory(assistant_id, assistant.get_memory())
+    return response(200, assistant.get_memory())
 
 
 @app.route('/health', methods=['POST'])
