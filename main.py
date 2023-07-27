@@ -13,6 +13,7 @@ app = Flask(__name__)
 CORS(app)
 
 ASSISTANT_NOT_FOUND = "The assistant with id {} was not found"
+SERVER_ERROR = "Internal server error"
 
 
 def create_new_assistant():
@@ -82,8 +83,10 @@ def get_memory():
     try:
         assistant_memory = database.get_assistant_memory(assistant_id)
         return response(200, assistant_memory)
-    except:
+    except TypeError:
         return response(409, ASSISTANT_NOT_FOUND.format(assistant_id))
+    except Exception:
+        return response(500, SERVER_ERROR)
 
 
 @app.route('/clean-memory', methods=['POST'])
