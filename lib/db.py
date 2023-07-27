@@ -20,7 +20,7 @@ class DB:
 
     def get_assistant_memory(self, assistant_id):
         self.cursor.execute(
-            "SELECT memory FROM assistants WHERE id=%s;", (assistant_id))
+            "SELECT memory FROM assistants WHERE id=%s;", (assistant_id, ))
         result = self.cursor.fetchone()[0]
         self.connection.close()
         return json.loads(result)
