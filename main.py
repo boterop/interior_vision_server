@@ -15,6 +15,7 @@ CORS(app)
 ASSISTANT_NOT_FOUND = "The assistant with id {} was not found"
 SERVER_ERROR = "Internal server error"
 MESSAGES_LIMIT = "You have been reached the max length of memory"
+CONTEXT_LENGTH_EXCEEDED = "context_length_exceeded"
 
 
 def create_new_assistant():
@@ -56,8 +57,8 @@ def ask():
         database.save_memory(assistant_id, assistant.get_memory())
         return response(200, resp)
     except Exception as e:
-        print(e.error)
-        if ("maximum context length" in e.error):
+        print(e.code)
+        if e.code == CONTEXT_LENGTH_EXCEEDED:
             return response(409, MESSAGES_LIMIT)
         return response(500, SERVER_ERROR)
 
@@ -69,10 +70,16 @@ def view():
     assistant_id = get("assistant_id")
     assistant = get_assistant(assistant_id)
 
-    prompt = assistant.ask(os.getenv("CREATE_PROMPT")).replace("\n", ". ")
-    url = dall_e.create_image(prompt, Dall_E.MEDIUM, 1)
+    try:
+        prompt = assistant.ask(os.getenv("CREATE_PROMPT")).replace("\n", ". ")
+        url = dall_e.create_image(prompt, Dall_E.MEDIUM, 1)
 
-    return response(200, url)
+        return response(200, url)
+    except Exception as e:
+        print(e.code)
+        if e.code == CONTEXT_LENGTH_EXCEEDED:
+            return response(409, MESSAGES_LIMIT)
+        return response(500, SERVER_ERROR)
 
 
 @app.route('/create-assistant', methods=['POST'])
