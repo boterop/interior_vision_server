@@ -1,4 +1,5 @@
 import os
+import openai
 from lib.gpt import GPT
 from lib.dall_e import Dall_E
 from dotenv import load_dotenv
@@ -14,6 +15,7 @@ CORS(app)
 
 ASSISTANT_NOT_FOUND = "The assistant with id {} was not found"
 SERVER_ERROR = "Internal server error"
+MESSAGES_LIMIT = "You have been reached the max length of memory"
 
 
 def create_new_assistant():
@@ -50,9 +52,15 @@ def ask():
     assistant_id = get("assistant_id")
 
     assistant = get_assistant(assistant_id)
-    resp = assistant.ask(message)
-    database.save_memory(assistant_id, assistant.get_memory())
-    return response(200, resp)
+    try:
+        resp = assistant.ask(message)
+        database.save_memory(assistant_id, assistant.get_memory())
+        return response(200, resp)
+    except openai.InvalidRequestError as e:
+        print(e.error)
+        if ("maximum context length" in e.error):
+            return response(409, MESSAGES_LIMIT)
+        return response(500, SERVER_ERROR)
 
 
 @app.route('/view', methods=['POST'])
