@@ -1,5 +1,4 @@
 import os
-import openai
 from lib.gpt import GPT
 from lib.dall_e import Dall_E
 from dotenv import load_dotenv
@@ -56,7 +55,7 @@ def ask():
         resp = assistant.ask(message)
         database.save_memory(assistant_id, assistant.get_memory())
         return response(200, resp)
-    except openai.InvalidRequestError as e:
+    except Exception as e:
         print(e.error)
         if ("maximum context length" in e.error):
             return response(409, MESSAGES_LIMIT)
