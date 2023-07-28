@@ -73,7 +73,8 @@ def view():
     try:
         prompt = assistant.ask(os.getenv("CREATE_PROMPT")).replace("\n", ". ")
         print(prompt)
-        url = dall_e.create_image(prompt, Dall_E.MEDIUM, 1)
+        url = dall_e.create_image("{}, {}".format(
+            prompt, os.getenv("DALLE_CONFIG")), Dall_E.MEDIUM, 1)
 
         return response(200, url)
     except Exception as e:
