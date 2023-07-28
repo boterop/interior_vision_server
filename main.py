@@ -57,7 +57,7 @@ def ask():
         database.save_memory(assistant_id, assistant.get_memory())
         return response(200, resp)
     except Exception as e:
-        print(e.code)
+        print(e)
         if e.code == CONTEXT_LENGTH_EXCEEDED:
             return response(409, MESSAGES_LIMIT)
         return response(500, SERVER_ERROR)
@@ -76,7 +76,7 @@ def view():
 
         return response(200, url)
     except Exception as e:
-        print(e.code)
+        print(e)
         if e.code == CONTEXT_LENGTH_EXCEEDED:
             return response(409, MESSAGES_LIMIT)
         return response(500, SERVER_ERROR)
