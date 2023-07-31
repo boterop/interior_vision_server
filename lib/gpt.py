@@ -3,12 +3,19 @@ import os
 
 
 class GPT():
-    def __init__(self, role):
-        openai.api_key = os.getenv("OPENAI_KEY")
-        self.messages = [{"role": "system", "content": role}]
+    LANG_INSTRUCTION = "We are going to speak in {}"
 
     def __init__(self):
         openai.api_key = os.getenv("OPENAI_KEY")
+
+    def set_role(self, role):
+        self.messages = [{"role": "system", "content": role}]
+
+    def set_language(self, lang):
+        self.set_system(self.LANG_INSTRUCTION.format(lang))
+
+    def set_system(self, instruction):
+        self.messages.append({"role": "system", "content": instruction})
 
     def memorize(self, text):
         self.messages.append({"role": "assistant", "content": text})
