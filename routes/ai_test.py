@@ -14,7 +14,7 @@ def get(prop):
 
 
 def response(code, message):
-    return {'status': code, 'response': str(message)}
+    return {'status': code, 'response': message}
 
 
 @ai_test.route('/test/ask', methods=['POST'])
@@ -30,7 +30,7 @@ def test_view():
 
 @ai_test.route('/test/create-assistant', methods=['POST'])
 def test_create_assistant():
-    return response(200, 1)
+    return response(200, "1")
 
 
 @ai_test.route('/test/get-memory', methods=['POST'])
@@ -38,8 +38,12 @@ def test_get_memory():
     assistant_id = get("assistant_id")
 
     if assistant_id == "1":
-        assistant_memory = [{"content": "Test content", "role": "system"}, {
-            "content": "Another test content", "role": "system"}, {"content": "Third content", "role": "system"}, {"content": "hi", "role": "user"}, {"content": "hi", "role": "assistant"}]
+        assistant_memory = [
+            {"content": "Test content", "role": "system"},
+            {"content": "Another test content", "role": "system"},
+            {"content": "Third content", "role": "system"},
+            {"content": "hi", "role": "user"},
+            {"content": "hi", "role": "assistant"}]
         return response(200, assistant_memory)
     elif assistant_id == "2":
         return response(409, ASSISTANT_NOT_FOUND.format(assistant_id))
