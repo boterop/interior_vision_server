@@ -39,7 +39,7 @@ def test_get_memory():
 
     if assistant_id == "1":
         assistant_memory = [{"content": "Test content", "role": "system"}, {
-            "content": "Another test content", "role": "system"}, {"content": "Third content", "role": "system"}, {"content": "hi", "role": "user"}, {"content": "hi"}]
+            "content": "Another test content", "role": "system"}, {"content": "Third content", "role": "system"}, {"content": "hi", "role": "user"}, {"content": "hi", "role": "assistant"}]
         return response(200, assistant_memory)
     elif assistant_id == "2":
         return response(409, ASSISTANT_NOT_FOUND.format(assistant_id))
