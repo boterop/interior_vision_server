@@ -18,23 +18,34 @@ class DB:
         except Exception as e:
             print("ERROR creating connection: {}".format(e))
 
-    def get_assistant_memory(self, assistant_id):
+    def get_assistant_memory(self, assistant_id, assistant_key):
         self.cursor.execute(
-            "SELECT memory FROM assistants WHERE id=%s;", (assistant_id, ))
+            "SELECT memory FROM assistants WHERE id=%s AND key=%s;", (assistant_id, assistant_key))
         result = self.cursor.fetchone()[0]
-        self.connection.close()
         return json.loads(result)
 
-    def save_memory(self, assistant_id, memory):
+    def get_free_assistant(self):
         self.cursor.execute(
-            "UPDATE assistants SET memory = %s WHERE id=%s;", (json.dumps(memory), assistant_id))
-        self.connection.commit()
-        self.connection.close()
+            "SELECT id FROM assistants WHERE key='';")
+        result = self.cursor.fetchone()
+        return result
 
-    def create_memory(self, memory):
+    def save_memory(self, assistant_id, assistant_key, memory):
         self.cursor.execute(
-            "INSERT INTO assistants (memory) VALUES (%s) RETURNING id;", (json.dumps(memory),))
+            "UPDATE assistants SET memory = %s WHERE id=%s AND key=%s;", (json.dumps(memory), assistant_id, assistant_key))
+        self.connection.commit()
+
+    def update_key(self, assistant_id, assistant_key):
+        self.cursor.execute(
+            "UPDATE assistants SET key = %s WHERE id=%s;", (assistant_key, assistant_id))
+        self.connection.commit()
+
+    def create_memory(self, assistant_key, memory):
+        self.cursor.execute(
+            "INSERT INTO assistants (memory, key) VALUES (%s, %s) RETURNING id;", (json.dumps(memory), assistant_key))
         result = self.cursor.fetchone()[0]
         self.connection.commit()
-        self.connection.close()
         return result
+
+    def close(self):
+        self.connection.close()
