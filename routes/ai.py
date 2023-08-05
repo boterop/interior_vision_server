@@ -127,13 +127,13 @@ def get_memory():
         return response(401, UNAUTHORIZED_ERROR)
     database = DB()
     assistant_id = get("assistant_id")
-    assistant_key = get("assistant_key")
     try:
+        assistant_key = get("assistant_key")
         assistant_memory = database.get_assistant_memory(
             assistant_id, assistant_key)
         database.close()
         return response(200, assistant_memory)
-    except TypeError:
+    except (TypeError, KeyError):
         return response(409, ASSISTANT_NOT_FOUND.format(assistant_id))
     except Exception as e:
         print(e)
