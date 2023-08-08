@@ -15,4 +15,6 @@ app.register_blueprint(ai)
 app.register_blueprint(ai_test)
 
 if __name__ == "__main__":
-    serve(app, host="0.0.0.0", port=os.getenv("PORT", 6000))
+    port = os.getenv("PORT", 6000)
+    print("Listening on port {}".format(port))
+    serve(app, host="0.0.0.0", port=port)
