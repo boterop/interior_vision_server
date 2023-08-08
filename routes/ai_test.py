@@ -56,6 +56,6 @@ def test_clean_memory():
     return response(200, [])
 
 
-@ai_test.route('/test/health', methods=['POST'])
+@ai_test.route('/test/health', methods=['GET'])
 def test_health():
     return response(200, "OK")

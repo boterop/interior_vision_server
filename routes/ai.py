@@ -153,6 +153,6 @@ def clean_memory():
     return response(200, assistant.get_memory())
 
 
-@ai.route('/health', methods=['POST'])
+@ai.route('/health', methods=['GET'])
 def health():
     return response(200, "OK")
