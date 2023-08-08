@@ -1,3 +1,4 @@
+import os
 from dotenv import load_dotenv
 from flask import Flask
 from flask_cors import CORS
@@ -14,4 +15,4 @@ app.register_blueprint(ai)
 app.register_blueprint(ai_test)
 
 if __name__ == "__main__":
-    serve(app, host="0.0.0.0", port=6000)
+    serve(app, host="0.0.0.0", port=os.getenv("PORT", 6000))
