@@ -7,6 +7,7 @@ class GPT():
 
     def __init__(self):
         openai.api_key = os.getenv("OPENAI_KEY")
+        openai.organization = os.getenv("OPENAI_ORGANIZATION")
 
     def set_role(self, role):
         self.messages = [{"role": "system", "content": role}]
@@ -33,7 +34,7 @@ class GPT():
         self.messages.append({"role": "user", "content": text})
 
         result = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            model=os.getenv("GPT_MODEL"),
             messages=self.messages
         ).choices[0].message.content
 
