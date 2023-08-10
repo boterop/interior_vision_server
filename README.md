@@ -43,7 +43,7 @@ then `sudo systemctl enable script` and `sudo systemctl start script`
 
 ## Endpoints
 
-Authorization: Bearer,
+Authorization: Bearer.
 
 - <b>POST</b> _/ask_
 
