@@ -67,8 +67,9 @@ def ask():
         return response(409, ASSISTANT_NOT_FOUND.format(assistant_id))
     except Exception as e:
         print(e)
-        if e.code == CONTEXT_LENGTH_EXCEEDED:
-            return response(409, MESSAGES_LIMIT)
+        if hasattr(e, 'code'):
+            if e.code == CONTEXT_LENGTH_EXCEEDED:
+                return response(409, MESSAGES_LIMIT)
         return response(500, SERVER_ERROR)
 
 
